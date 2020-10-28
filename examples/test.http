@@ -1,0 +1,18 @@
+GET http://localhost:3030/
+
+###
+POST http://localhost:3030/
+ce-specversion: 1.0
+ce-id: 2
+ce-type: example.event
+ce-source: url://example_response/
+content-type: application/json
+
+{
+  "age": 43,
+  "name": "John Doe",
+  "phones": [
+    "+44 1234567",
+    "+44 2345678"
+  ]
+}
