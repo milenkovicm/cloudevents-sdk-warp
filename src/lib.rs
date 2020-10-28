@@ -11,7 +11,20 @@ pub mod reply {
     use http::StatusCode;
     use warp::reply::Response;
 
-    pub fn event(event: Event) -> Response {
+    ///
+    /// # Serializes `CE` as a http response
+    /// 
+    /// ```
+    /// use cloudevents_sdk_warp::{filter, reply};
+    /// use warp::Filter;
+    /// use warp::Reply;
+    /// 
+    /// let routes = warp::any()
+    ///    .and(filter::ce_event())
+    ///    .map(|event| reply::ce_event(event));
+    /// ```
+    
+    pub fn ce_event(event: Event) -> Response {
         match event_to_response(event) {
             Ok(response) => response,
             Err(e) => {
@@ -42,7 +55,7 @@ pub mod reply {
                 .build()
                 .unwrap();
 
-            let resp = super::event(input);
+            let resp = super::ce_event(input);
 
             assert_eq!(
                 resp.headers()
@@ -83,7 +96,7 @@ pub mod reply {
                 .build()
                 .unwrap();
 
-            let resp = super::event(input);
+            let resp = super::ce_event(input);
 
             assert_eq!(
                 resp.headers()
@@ -141,6 +154,24 @@ pub mod filter {
 
     impl warp::reject::Reject for CEFilterError {}
 
+
+    ///
+    /// # Extracts `CE` event from incoming request
+    /// 
+    /// ```
+    /// use cloudevents_sdk_warp::filter;
+    /// use warp::Filter;
+    /// use warp::Reply;
+    /// 
+    /// let routes = warp::any()
+    ///    .and(filter::ce_event())
+    ///    .map(|event| {
+    ///         // do something with the event
+    ///     }
+    ///     );
+    /// ```
+    /// 
+    
     pub fn ce_event() -> impl Filter<Extract = (Event,), Error = Rejection> + Copy {
         warp::header::headers_cloned()
             .and(warp::body::bytes())

@@ -11,8 +11,6 @@ use cloudevents::message::{
 use cloudevents::{message, Event};
 use std::convert::TryFrom;
 
-//pub(crate) type Request = http::Request<hyper::Body>;
-/// Wrapper for [`HttpRequest`] that implements [`MessageDeserializer`] trait.
 pub struct CERequestDeserializer<'a> {
     req: &'a HeaderMap,
     body: Bytes,
@@ -104,33 +102,8 @@ impl<'a> MessageDeserializer for CERequestDeserializer<'a> {
     }
 }
 
-/// Method to transform an incoming [`HttpRequest`] to [`Event`].
-pub fn request_to_event(req: &HeaderMap, bytes: bytes::Bytes) -> std::result::Result<Event, Error> {
-    //hyper::body::aggregate(&mut req.body()).await.unwrap();
-    //hyper::body::to_bytes(req.body()).await.unwrap();
 
-    //let mut bytes = BytesMut::new();
-    // while let Some(item) = payload.next().await {
-    //     bytes.extend_from_slice(&item?);
-    // }
+pub fn request_to_event(req: &HeaderMap, bytes: bytes::Bytes) -> std::result::Result<Event, Error> {
     MessageDeserializer::into_event(CERequestDeserializer::new(req, bytes))
 }
 
-// Extention Trait for [`HttpRequest`] which acts as a wrapper for the function [`request_to_event()`].
-// #[async_trait(?Send)]
-// pub trait RequestExt {
-//     async fn to_event(
-//         &self,
-//         mut payload: web::Payload,
-//     ) -> std::result::Result<Event, actix_web::error::Error>;
-// }
-
-// #[async_trait(?Send)]
-// impl RequestExt for Request {
-//     async fn to_event(
-//         &self,
-//         payload: web::Payload,
-//     ) -> std::result::Result<Event, actix_web::error::Error> {
-//         request_to_event(self, payload).await
-//     }
-// }

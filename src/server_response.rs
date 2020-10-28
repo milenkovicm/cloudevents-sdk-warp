@@ -90,23 +90,7 @@ impl StructuredSerializer<Response> for CEResponseSerializer {
     }
 }
 
-// Method to fill an [`HttpResponseBuilder`] with an [`Event`].
-// pub async fn event_to_response(event: Event, response: Builder,) -> std::result::Result<Response, Error> {
-//     BinaryDeserializer::deserialize_binary(event, CEResponseSerializer::from(response))
-// }
-
 pub fn event_to_response(event: Event) -> std::result::Result<Response, Error> {
     BinaryDeserializer::deserialize_binary(event, CEResponseSerializer::new())
 }
 
-// #[async_trait(?Send)]
-// pub trait HttpResponseBuilderExt {
-//     async fn event(self,event: Event,) -> std::result::Result<Response, Error>;
-// }
-
-// #[async_trait(?Send)]
-// impl HttpResponseBuilderExt for Builder {
-//     async fn event(self,event: Event,) -> std::result::Result<Response, Error> {
-//         event_to_response(event, self).await
-//     }
-// }

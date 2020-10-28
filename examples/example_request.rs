@@ -9,7 +9,7 @@ async fn main() {
         // extracting event from request
         .and(filter::ce_event())
         // returning event back
-        .map(|event| reply::event(event));
+        .map(|event| reply::ce_event(event));
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
