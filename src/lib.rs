@@ -20,11 +20,11 @@ pub mod reply {
     /// use warp::Reply;
     /// 
     /// let routes = warp::any()
-    ///    .and(filter::ce_event())
-    ///    .map(|event| reply::ce_event(event));
+    ///    .and(filter::to_event())
+    ///    .map(|event| reply::from_event(event));
     /// ```
     
-    pub fn ce_event(event: Event) -> Response {
+    pub fn from_event(event: Event) -> Response {
         match event_to_response(event) {
             Ok(response) => response,
             Err(e) => {
@@ -55,7 +55,7 @@ pub mod reply {
                 .build()
                 .unwrap();
 
-            let resp = super::ce_event(input);
+            let resp = super::from_event(input);
 
             assert_eq!(
                 resp.headers()
@@ -96,7 +96,7 @@ pub mod reply {
                 .build()
                 .unwrap();
 
-            let resp = super::ce_event(input);
+            let resp = super::from_event(input);
 
             assert_eq!(
                 resp.headers()
@@ -164,7 +164,7 @@ pub mod filter {
     /// use warp::Reply;
     /// 
     /// let routes = warp::any()
-    ///    .and(filter::ce_event())
+    ///    .and(filter::to_event())
     ///    .map(|event| {
     ///         // do something with the event
     ///     }
@@ -172,7 +172,7 @@ pub mod filter {
     /// ```
     /// 
     
-    pub fn ce_event() -> impl Filter<Extract = (Event,), Error = Rejection> + Copy {
+    pub fn to_event() -> impl Filter<Extract = (Event,), Error = Rejection> + Copy {
         warp::header::headers_cloned()
             .and(warp::body::bytes())
             .and_then(create_event)
@@ -189,7 +189,7 @@ pub mod filter {
 
     #[cfg(test)]
     mod tests {
-        use super::ce_event;
+        use super::to_event;
         use url::Url;
         use warp::test;
 
@@ -220,7 +220,7 @@ pub mod filter {
                 .header("ce-source", "http://localhost/")
                 .header("ce-someint", "10")
                 .header("ce-time", time.to_rfc3339())
-                .filter(&ce_event())
+                .filter(&to_event())
                 .await
                 .unwrap();
 
@@ -254,7 +254,7 @@ pub mod filter {
                 .header("ce-time", time.to_rfc3339())
                 .header("content-type", "application/json")
                 .json(&j)
-                .filter(&ce_event())
+                .filter(&to_event())
                 .await
                 .unwrap();
 

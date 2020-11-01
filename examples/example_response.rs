@@ -28,7 +28,7 @@ async fn main() {
             .build();
 
         match event {
-            Ok(event) => Ok(reply::ce_event(event)),
+            Ok(event) => Ok(reply::from_event(event)),
             Err(e) => Ok(warp::reply::with_status(
                 e.to_string(),
                 StatusCode::INTERNAL_SERVER_ERROR,

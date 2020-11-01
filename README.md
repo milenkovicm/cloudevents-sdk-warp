@@ -20,9 +20,9 @@ use warp::Filter;
 async fn main() {
     let routes = warp::any()
         // extracting event from request
-        .and(filter::ce_event())
+        .and(filter::to_event())
         // returning event back
-        .map(|event| reply::ce_event(event));
+        .map(|event| reply::from_event(event));
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
@@ -94,7 +94,7 @@ async fn main() {
             .build();
 
         match event {
-            Ok(event) => Ok(reply::ce_event(event)),
+            Ok(event) => Ok(reply::from_event(event)),
             Err(e) => Ok(warp::reply::with_status(
                 e.to_string(),
                 StatusCode::INTERNAL_SERVER_ERROR,

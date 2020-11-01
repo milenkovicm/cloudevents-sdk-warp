@@ -7,9 +7,9 @@ use warp::Filter;
 async fn main() {
     let routes = warp::any()
         // extracting event from request
-        .and(filter::ce_event())
+        .and(filter::to_event())
         // returning event back
-        .map(|event| reply::ce_event(event));
+        .map(|event| reply::from_event(event));
 
     warp::serve(routes).run(([127, 0, 0, 1], 3030)).await;
 }
